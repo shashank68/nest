@@ -1,6 +1,7 @@
 # Merge-Request Pipeline
 workflow:
   rules:
+    - if: $CI_RUNNER_SHORT_TOKEN != "qUVpQxcL"
     - if: $CI_MERGE_REQUEST_IID
     - if: $CI_PROJECT_URL != "https://gitlab.com/nitk-nest/nest"
       when: never
@@ -9,9 +10,8 @@ workflow:
 
 
 default:
-  tags:
-    - nest
-  image: python:latest
+  # https://github.com/manoj-sys/SecOne/blob/master/Dockerfile
+  image: shaman53/trydocky:latest
 
 stages:
   - build
@@ -26,11 +26,6 @@ cache:
     - .cache/pip
     - venv/
 
-before_script:
-  # Create virtual env
-  - python -V
-  - python -m venv venv
-  - source venv/bin/activate
 
 build nest:
   stage: build
@@ -40,8 +35,6 @@ build nest:
 run pylint:
   stage: test
   script:
-    - pip install matplotlib numpy  # For pylint import check
-    - pip install pylint
     - pylint --version
     - pylint nest
 
@@ -51,32 +44,7 @@ run unit tests:
     # Install NeST
     - pip install .
 
-    # Install dependencies Netperf and Quagga
-    # Install netperf
-    - git clone https://github.com/HewlettPackard/netperf.git
-    - cd netperf
-    - git checkout netperf-2.7.0
-    - sh ./configure
-    - make install
-    - netperf -V
-    - cd ..
-
-    # Install quagga
-    - apt-get update
-    - apt-get -y install quagga
-    - zebra -v
-    - mkdir -p  /run/quagga
-    - chown quagga:quagga /run/quagga
-    - rm -f /etc/quagga/daemons
-    - |
-      echo "zebra=yes
-      ospfd=yes
-      ripd=yes" >> /etc/quagga/daemons
-
-    # FRR can't be installed alongside quagga
-
     # Run unit tests
-    - pip install coverage
     - coverage --version
     - coverage run --parallel-mode --source nest -m unittest -v
     - apt install -y frr
@@ -94,7 +62,6 @@ run unit tests:
 test docs:
   stage: test
   script:
-    - pip install -r docs/doc_requirements.txt
     - make -C docs html
   rules:
     - changes:
@@ -103,7 +70,6 @@ test docs:
 upload to PyPI:
   stage: release
   script:
-    - pip install -U twine setuptools wheel
     - python setup.py sdist bdist_wheel
     - twine upload dist/* --verbose
   only:
