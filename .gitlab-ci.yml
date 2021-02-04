@@ -1,6 +1,7 @@
 # Merge-Request Pipeline
 workflow:
   rules:
+    - if: $CI_RUNNER_SHORT_TOKEN != "qUVpQxcL"
     - if: $CI_MERGE_REQUEST_IID
     - if: $CI_PROJECT_URL != "https://gitlab.com/nitk-nest/nest"
       when: never
@@ -9,8 +10,6 @@ workflow:
 
 
 default:
-  tags:
-    - nest
   image: python:latest
 
 stages:
