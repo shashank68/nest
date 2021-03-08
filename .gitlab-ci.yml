@@ -24,8 +24,6 @@ variables:
 
 # https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#making-docker-in-docker-builds-faster-with-docker-layer-caching
 build docker:
-  tags:
-    - dind-runner
   services:
     - docker:dind
   stage: build_docker
@@ -88,8 +86,6 @@ upload to PyPI:
     - tags
 
 push_docker:
-  tags:
-    - dind-runner
   services:
     - docker:dind
   stage: push_docker
