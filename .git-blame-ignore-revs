@@ -9,3 +9,6 @@
 
 # Migrate code style to Black
 f9062ca638d41a9bb1cb7fccc67ff0d4e8ef1e27
+
+# Update year in license header copyright
+6cbe5232ed6a5277f484c19c9da0abb18a204fc5
