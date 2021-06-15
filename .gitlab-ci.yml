@@ -38,9 +38,10 @@ build docker:
     - docker push $CONTAINER_TEST_IMAGE
 
 run style check:
-  image: $CONTAINER_TEST_IMAGE
+  image: python:latest
   stage: test
   script:
+    - pip install pre-commit gitlint
     - pre-commit --version
     - pre-commit run --all-files
 
